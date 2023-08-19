@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"
+
+  backend:
+    build:
+      context: ./grocery
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+  
+  db:
+    image: postgres:latest  
+    container_name: my-postgres-db
+    environment:
+      POSTGRES_DB: postgres  
+      POSTGRES_USER: postgres  
+      POSTGRES_PASSWORD: postgres  
+    ports:
+      - "5432:5432" 
